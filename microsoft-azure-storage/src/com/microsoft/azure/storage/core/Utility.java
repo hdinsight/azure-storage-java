@@ -558,8 +558,14 @@ public final class Utility {
      * @throws SAXException
      */
     public static SAXParser getSAXParser() throws ParserConfigurationException, SAXException {
-        saxParserFactory.setNamespaceAware(true);
-        return saxParserFactory.newSAXParser();
+        ClassLoader orgContextLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(saxParserFactory.getClass().getClassLoader());
+            saxParserFactory.setNamespaceAware(true);
+            return saxParserFactory.newSAXParser();
+        } finally {
+            Thread.currentThread().setContextClassLoader(orgContextLoader);
+        }
     }
     
     /**
@@ -612,7 +618,13 @@ public final class Utility {
      * @throws XMLStreamException
      */
     public static XMLStreamWriter createXMLStreamWriter(StringWriter outWriter) throws XMLStreamException {
-        return xmlOutputFactory.createXMLStreamWriter(outWriter);
+        ClassLoader orgContextLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(xmlOutputFactory.getClass().getClassLoader());
+            return xmlOutputFactory.createXMLStreamWriter(outWriter);
+        } finally {
+            Thread.currentThread().setContextClassLoader(orgContextLoader);
+        }
     }
 
     /**
@@ -628,7 +640,13 @@ public final class Utility {
      */
     public static XMLStreamWriter createXMLStreamWriter(OutputStream outStream, String charset)
             throws XMLStreamException {
-        return xmlOutputFactory.createXMLStreamWriter(outStream, charset);
+        ClassLoader orgContextLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(xmlOutputFactory.getClass().getClassLoader());
+            return xmlOutputFactory.createXMLStreamWriter(outStream, charset);
+        } finally {
+            Thread.currentThread().setContextClassLoader(orgContextLoader);
+        }
     }
 
     /**
